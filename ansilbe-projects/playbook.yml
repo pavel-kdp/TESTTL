@@ -1,0 +1,77 @@
+---
+- name: Изменение hostname для балансировщика
+  hosts: balance
+  become: yes
+  tasks:
+    - name: Задать hostname для балансировщика
+      hostname:
+        name: "yabalance{{ ansible_play_hosts.index(inventory_hostname) + 1 }}"
+
+- name: Изменение hostname для бэкенда
+  hosts: backend
+  become: yes
+  tasks:
+    - name: Изменение hostname для бэкенда
+      hostname:
+        name: "yabackend{{ ansible_play_hosts.index(inventory_hostname) + 1 }}"
+
+- name: Установка Nginx
+  hosts: all
+  become: yes
+  tasks:
+    - name: Установка EPEL репозитория
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Обновление пакетов
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Установка Nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Запуск Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+- name: Настройка балансировщика нагрузки
+  hosts: balance
+  become: yes
+  tasks:
+    - name: Настройка конфигурации Nginx
+      copy:
+        src: /home/bakhtinpa/ansilbe-projects/nginx.conf
+        dest: /etc/nginx/nginx.conf
+
+    - name: Копирование сертификата
+      copy:
+        src: /home/bakhtinpa/ansilbe-projects/myserver.crt
+        dest: /etc/nginx/myserver.crt
+
+    - name: Копирование ключа
+      copy:
+        src: /home/bakhtinpa/ansilbe-projects/myserver.key
+        dest: /etc/nginx/myserver.key
+        
+    - name: Пререзапуск nginx
+      service:
+        name: nginx
+        state: restarted
+
+- name: Настройка backend
+  hosts: backend
+  become: yes
+  tasks:
+    - name: Создать файл с текстом
+      shell: cat /etc/hostname > /usr/share/nginx/html/index.html
+
+    - name: Перезапустить nginx
+      service:
+        name: nginx
+        state: restarted

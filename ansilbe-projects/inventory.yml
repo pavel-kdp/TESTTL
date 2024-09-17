@@ -1,0 +1,15 @@
+all:
+  children:
+    balance:
+      hosts:
+        yabalance1:
+          ansible_host: 51.250.74.144
+          ansible_user: user
+    backend:
+      hosts:
+        yabackend1:
+          ansible_host: 89.169.129.1 
+          ansible_user: user
+        yabackend2:
+          ansible_host: 89.169.155.210
+          ansible_user: user
