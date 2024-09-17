@@ -7,8 +7,8 @@
 
 Конфигурация terraform: TESTTL\terraform3vm\main.tf
 
-Inventory Ansible: TESTtravelline\ansilbe-projects\inventory.yml
-Playbook Ansible: TESTtravelline\ansilbe-projects\playbook.yml
+Inventory Ansible: TESTTL\ansilbe-projects\inventory.yml
+Playbook Ansible: TESTTL\ansilbe-projects\playbook.yml
 
 Код для развертывание инфраструктуры: https://github.com/pavel-kdp/TESTTL
 
